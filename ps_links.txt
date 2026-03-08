@@ -1,0 +1,11 @@
+# ps_links.txt - Upload file ini ke GitHub repo kamu
+# 2 cloud per baris (per private server)
+# Baris 1 = Cloud 1 & 2
+# Baris 2 = Cloud 3 & 4
+# Baris 3 = Cloud 5 & 6
+# dst...
+# HAPUS semua baris komentar (#) ini, isi link asli kamu:
+
+https://www.roblox.com/share?code=GANTI_CODE_GRUP1&type=Server
+https://www.roblox.com/share?code=GANTI_CODE_GRUP2&type=Server
+https://www.roblox.com/share?code=GANTI_CODE_GRUP3&type=Server
