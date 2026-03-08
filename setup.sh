@@ -2,9 +2,9 @@
 
 # ================================================================
 #  WINTER-REJOIN AUTO SETUP - ALL IN ONE
-#  Usage: bash <(curl -sL https://raw.githubusercontent.com/MarchianoKevinPrasetyaDjati/CONFIGROBLOX/main/setup.sh) NOMOR_CLOUD
-#  Contoh: bash <(curl -sL ...) 1   → cloud 1 (PS baris 1)
-#          bash <(curl -sL ...) 3   → cloud 3 (PS baris 2)
+#  Usage: bash <(wget -qO- https://raw.githubusercontent.com/USERNAME/REPO/main/setup.sh) NOMOR_CLOUD
+#  Contoh: bash <(wget -qO- ...) 1   → cloud 1 (PS baris 1)
+#          bash <(wget -qO- ...) 3   → cloud 3 (PS baris 2)
 # ================================================================
 
 # ── KONFIGURASI - GANTI SESUAI REPO KAMU ────────────────────────
@@ -43,13 +43,13 @@ log "Storage OK"
 line
 info "Step 2: Install packages..."
 pkg update -y -o Dpkg::Options::="--force-confnew" 2>/dev/null | tail -1
-pkg install -y lua53 sqlite termux-api unzip curl 2>/dev/null | tail -3
+pkg install -y lua53 sqlite termux-api unzip wget 2>/dev/null | tail -3
 log "Packages OK"
 
 # ── STEP 3: DOWNLOAD & EXTRACT ZIP CONFIG ───────────────────────
 line
 info "Step 3: Download config.zip dari GitHub..."
-curl -L --progress-bar -o /sdcard/Download/config.zip "$ZIP_URL" || err "Gagal download config.zip dari GitHub!"
+wget -q --show-progress -O /sdcard/Download/config.zip "$ZIP_URL" || err "Gagal download config.zip dari GitHub!"
 log "Download selesai"
 
 info "Extracting config ke /sdcard/..."
@@ -79,7 +79,7 @@ echo ""
 # ── STEP 5: AMBIL PS LINK DARI GITHUB ───────────────────────────
 line
 info "Step 4: Ambil Private Server link dari GitHub (baris ${PS_LINE})..."
-RAW_PS=$(curl -sf "$PS_FILE_URL" | grep -v '^#' | grep -v '^$' | sed -n "${PS_LINE}p")
+RAW_PS=$(wget -qO- "$PS_FILE_URL" | grep -v '^#' | grep -v '^$' | sed -n "${PS_LINE}p")
 
 if [ -z "$RAW_PS" ]; then
     warn "Gagal ambil PS link dari GitHub!"
