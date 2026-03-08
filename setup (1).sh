@@ -2,13 +2,13 @@
 
 # ================================================================
 #  WINTER-REJOIN AUTO SETUP - ALL IN ONE
-#  Usage: bash <(curl -sL https://raw.githubusercontent.com/USERNAME/REPO/main/setup.sh) NOMOR_CLOUD
+#  Usage: bash <(curl -sL https://raw.githubusercontent.com/MarchianoKevinPrasetyaDjati/CONFIGROBLOX/main/setup.sh) NOMOR_CLOUD
 #  Contoh: bash <(curl -sL ...) 1   → cloud 1 (PS baris 1)
 #          bash <(curl -sL ...) 3   → cloud 3 (PS baris 2)
 # ================================================================
 
 # ── KONFIGURASI - GANTI SESUAI REPO KAMU ────────────────────────
-GITHUB_RAW="https://raw.githubusercontent.com/USERNAME/REPO/main"
+GITHUB_RAW="https://raw.githubusercontent.com/MarchianoKevinPrasetyaDjati/CONFIGROBLOX/main"
 ZIP_URL="${GITHUB_RAW}/config.zip"         # zip config kamu di GitHub
 PS_FILE_URL="${GITHUB_RAW}/ps_links.txt"   # file PS link
 # ────────────────────────────────────────────────────────────────
