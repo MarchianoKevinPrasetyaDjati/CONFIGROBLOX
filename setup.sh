@@ -13,7 +13,7 @@ PS_FILE_URL="${GITHUB_RAW}/ps_links.txt"
 # ────────────────────────────────────────────────────────────────
 
 CLOUD_NUM=${1:-1}
-PS_LINE=$(( (CLOUD_NUM - 1) / 2 + 1 ))
+PS_LINE=$(( (CLOUD_NUM - 1) / 3 + 1 ))   # 3 cloud per PS: cloud 1-3=baris1, 4-6=baris2, dst
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
 log()  { echo -e "${GREEN}[✓]${NC} $1"; }
@@ -115,8 +115,15 @@ read -r COOKIES_INPUT
 
 [ -z "$COOKIES_INPUT" ] && err "Cookies tidak boleh kosong!"
 
-echo "$COOKIES_INPUT" > /sdcard/Download/cookie.txt
-log "Cookies disimpan ke /sdcard/Download/cookie.txt"
+# Konversi ke UTF-8 lalu timpa cookie.txt
+echo "$COOKIES_INPUT" | python3 -c "
+import sys
+raw = sys.stdin.buffer.read()
+# Decode dengan latin-1 (terima semua byte) lalu encode ulang ke UTF-8
+converted = raw.decode('latin-1').encode('utf-8').decode('utf-8').strip()
+print(converted)
+" > /sdcard/Download/cookie.txt
+log "Cookies dikonversi ke UTF-8 dan disimpan ke /sdcard/Download/cookie.txt"
 
 # ── STEP 7: JALANKAN WINTER-REJOIN ──────────────────────────────
 line
