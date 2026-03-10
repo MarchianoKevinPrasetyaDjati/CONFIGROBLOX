@@ -56,17 +56,17 @@ log "Extract selesai - folder Download/ dan RonixExploit/ sudah ditimpa"
 line
 echo ""
 echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${CYAN}║   STEP 4: INSTALL 8 CLONE APK ROBLOX             ║${NC}"
+echo -e "${BOLD}${CYAN}║   STEP 4: INSTALL 6 CLONE APK ROBLOX             ║${NC}"
 echo -e "${BOLD}${CYAN}║   Mendownload & install semua clone Roblox...    ║${NC}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════╝${NC}"
 echo ""
 info "Menjalankan installer.lua (pilih 1-8 otomatis)..."
 cd /sdcard/Download || err "Gagal masuk ke /sdcard/Download"
-echo "1-8" | lua installer.lua
+echo "1-6" | lua installer.lua
 if [ $? -ne 0 ]; then
     warn "installer.lua selesai dengan error — cek apakah semua APK berhasil terinstall"
 else
-    log "Semua 8 clone APK Roblox berhasil diinstall!"
+    log "Semua 6 clone APK Roblox berhasil diinstall!"
 fi
 echo ""
 
