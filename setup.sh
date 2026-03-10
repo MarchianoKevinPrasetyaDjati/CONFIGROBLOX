@@ -138,4 +138,4 @@ cd /sdcard/Download || err "Gagal masuk ke /sdcard/Download"
 info "Download winter-rejoin.lua terbaru..."
 curl -L -o /sdcard/Download/winter-rejoin.lua https://raw.githubusercontent.com/FnDXueyi/roblog/refs/heads/main/winter-rejoin.lua || err "Gagal download winter-rejoin.lua!"
 log "Download selesai"
-lua /sdcard/Download/winter-rejoin.lua </dev/null
+lua /sdcard/Download/winter-rejoin.lua
