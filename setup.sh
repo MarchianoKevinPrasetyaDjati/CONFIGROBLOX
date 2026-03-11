@@ -99,30 +99,30 @@ sed -i "s|^shared_link_1=.*|shared_link_1=${DEEPLINK}|" "$CONF"
 sed -i "s|^deeplink=.*|deeplink=${DEEPLINK}|" "$CONF"
 log "PS link berhasil diupdate di auto_rejoin.conf"
 
-# ── STEP 6: INPUT COOKIES ────────────────────────────────────────
+# ── STEP 6: PROSES COOKIES ───────────────────────────────────────
 line
-echo ""
-echo -e "${BOLD}${YELLOW}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${YELLOW}║   STEP 6: MASUKKAN COOKIES ROBLOX                ║${NC}"
-echo -e "${BOLD}${YELLOW}║                                                  ║${NC}"
-echo -e "${BOLD}${YELLOW}║   1. Buka browser di Redfinger cloud #${CLOUD_NUM}          ║${NC}"
-echo -e "${BOLD}${YELLOW}║   2. Login Roblox & copy cookies (_ROBLOSECURITY) ║${NC}"
-echo -e "${BOLD}${YELLOW}║   3. Paste di bawah ini lalu tekan ENTER          ║${NC}"
-echo -e "${BOLD}${YELLOW}╚══════════════════════════════════════════════════╝${NC}"
-echo ""
-echo -ne "${CYAN}Paste cookies → ${NC}"
-read -r COOKIES_INPUT
+info "Step 6: Memproses cookies untuk cloud #${CLOUD_NUM}..."
 
-[ -z "$COOKIES_INPUT" ] && err "Cookies tidak boleh kosong!"
+COOKIE_FILE="/sdcard/Download/cookie.txt"
+[ -f "$COOKIE_FILE" ] || err "cookie.txt tidak ditemukan di /sdcard/Download/!"
 
-# Konversi ke UTF-8 lalu timpa cookie.txt
-echo "$COOKIES_INPUT" | python3 -c "
-import sys
-raw = sys.stdin.buffer.read()
-converted = raw.decode('latin-1').encode('utf-8').decode('utf-8').strip()
-print(converted)
-" > /sdcard/Download/cookie.txt
-log "Cookies dikonversi ke UTF-8 dan disimpan ke /sdcard/Download/cookie.txt"
+START_LINE=$(( (CLOUD_NUM - 1) * 6 + 1 ))
+END_LINE=$(( CLOUD_NUM * 6 ))
+
+COOKIES_INPUT=$(sed -n "${START_LINE},${END_LINE}p" "$COOKIE_FILE")
+[ -z "$COOKIES_INPUT" ] && err "Akun untuk cloud #${CLOUD_NUM} (baris ${START_LINE}-${END_LINE}) tidak ditemukan di cookie.txt!"
+
+# Cek jumlah baris yang didapat
+GOT_LINES=$(echo "$COOKIES_INPUT" | grep -c '.')
+if [ "$GOT_LINES" -lt 6 ]; then
+    warn "Peringatan: cloud #${CLOUD_NUM} hanya mendapat ${GOT_LINES} akun (kurang dari 6)!"
+    warn "Baris ${START_LINE}-${END_LINE} di cookie.txt tidak lengkap."
+fi
+
+# Timpa cookie.txt hanya dengan 6 baris akun untuk cloud ini
+printf '%s\n' "$COOKIES_INPUT" > "$COOKIE_FILE"
+log "cookie.txt diupdate dengan akun baris ${START_LINE}-${END_LINE} untuk cloud #${CLOUD_NUM}"
+log "Cookies disimpan ke /sdcard/Download/cookie.txt"
 
 # ── STEP 7: JALANKAN WINTER-REJOIN ──────────────────────────────
 line
