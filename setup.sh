@@ -43,7 +43,26 @@ sleep 3
 [ -d "/sdcard/Download" ] || err "/sdcard/Download tidak ditemukan. Berikan permission storage dulu!"
 log "Storage OK"
 
-@@ -61,81 +66,84 @@ echo -e "${BOLD}${CYAN}║   Mendownload & install semua clone Roblox...    ║$
+# ── STEP 2: INSTALL PACKAGES ────────────────────────────────────
+line
+info "Step 2: Install packages..."
+pkg update -y -o Dpkg::Options::="--force-confnew" 2>/dev/null | tail -1
+pkg install -y lua53 sqlite termux-api unzip 2>/dev/null | tail -3
+log "Packages OK"
+
+# ── STEP 3: EXTRACT ZIP CONFIG ──────────────────────────────────
+line
+info "Step 3: Extract config.zip dari /sdcard/..."
+[ -f "/sdcard/config.zip" ] || err "File config.zip tidak ditemukan di /sdcard/! Upload dulu via Redfinger."
+unzip -o /sdcard/config.zip -d /sdcard/ > /dev/null 2>&1 || err "Gagal extract zip!"
+log "Extract selesai - folder Download/ dan RonixExploit/ sudah ditimpa"
+
+# ── STEP 4: INSTALL 8 CLONE APK ROBLOX ─────────────────────────
+line
+echo ""
+echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════╗${NC}"
+echo -e "${BOLD}${CYAN}║   STEP 4: INSTALL 6 CLONE APK ROBLOX             ║${NC}"
+echo -e "${BOLD}${CYAN}║   Mendownload & install semua clone Roblox...    ║${NC}"
 echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════╝${NC}"
 echo ""
 info "Menjalankan installer.lua (pilih 1-8 otomatis)..."
@@ -69,11 +88,10 @@ if [ -z "$RAW_PS" ]; then
 fi
 
 # Konversi ke deeplink format
-PS_CODE=$(echo "$RAW_PS" | grep -oP '(?<=code=)[^&]+')
 PS_CODE=$(printf '%s\n' "$RAW_PS" | sed -n 's/.*[?&]code=\([^&]*\).*/\1/p')
 [ -z "$PS_CODE" ] && err "Format PS link tidak valid! Pastikan ada ?code= di URL"
 
-DEEPLINK="roblox.com/share-links?code=${PS_CODE}&type=Server&pid=Server&is_retargeting=false&deep_link_value=roblox%3A%2F%2Fnavigation%2Fshare_links%3Fcode%3D${PS_CODE}%26type%3DServer"
+DEEPLINK="https://www.roblox.com/share-links?code=${PS_CODE}&type=Server&pid=Server&is_retargeting=false&deep_link_value=roblox%3A%2F%2Fnavigation%2Fshare_links%3Fcode%3D${PS_CODE}%26type%3DServer"
 DEEPLINK_ESCAPED=$(printf '%s\n' "$DEEPLINK" | sed 's/[&|]/\\&/g')
 
 log "PS Code: ${PS_CODE}"
@@ -83,8 +101,6 @@ log "Deeplink siap"
 CONF="/sdcard/Download/WinterHub/auto_rejoin.conf"
 [ -f "$CONF" ] || err "File auto_rejoin.conf tidak ditemukan!"
 
-sed -i "s|^shared_link_1=.*|shared_link_1=${DEEPLINK}|" "$CONF"
-sed -i "s|^deeplink=.*|deeplink=${DEEPLINK}|" "$CONF"
 sed -i "s|^shared_link_1=.*|shared_link_1=${DEEPLINK_ESCAPED}|" "$CONF"
 sed -i "s|^deeplink=.*|deeplink=${DEEPLINK_ESCAPED}|" "$CONF"
 log "PS link berhasil diupdate di auto_rejoin.conf"
@@ -128,7 +144,5 @@ cd /sdcard/Download || err "Gagal masuk ke /sdcard/Download"
 info "Download winter-rejoin.lua terbaru..."
 curl -L -o /sdcard/Download/winter-rejoin.lua https://raw.githubusercontent.com/FnDXueyi/roblog/refs/heads/main/winter-rejoin.lua || err "Gagal download winter-rejoin.lua!"
 log "Download selesai"
-lua /sdcard/Download/winter-rejoin.lua
 info "Menjalankan winter-rejoin.lua..."
-lua /sdcard/Download/winter-rejoin.lua || err "winter-rejoin.lua gagal dijalankan"
-log "Winter-rejoin berjalan"
+lua /sdcard/Download/winter-rejoin.lua
