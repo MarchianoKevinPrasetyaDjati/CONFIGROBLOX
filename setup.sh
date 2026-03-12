@@ -35,6 +35,32 @@ printf "║      Cloud #%-2s  │  Grup PS Baris %-2s      ║\n" "$CLOUD_NUM" "
 echo "╚══════════════════════════════════════════╝"
 echo -e "${NC}"
 
+# ── STEP 0: BUKA DEVELOPER OPTIONS ──────────────────────────────
+line
+info "Step 0: Membuka Developer Options..."
+if command -v am >/dev/null 2>&1; then
+    am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1         || am start -n com.android.settings/.DevelopmentSettings >/dev/null 2>&1         || warn "Gagal membuka Developer Options otomatis. Buka manual di Settings."
+else
+    warn "Perintah am tidak tersedia. Buka Developer Options manual."
+fi
+
+warn "Di Developer Options lakukan ini dulu:"
+warn "1) Matikan semua Animation scale (Window/Transition/Animator)."
+warn "2) Aktifkan Enable freeform windows."
+warn "3) Aktifkan Enable resizable windows."
+
+info "Mencoba set DPI ke 600..."
+if command -v wm >/dev/null 2>&1; then
+    wm density 600 >/dev/null 2>&1 \
+        && log "DPI berhasil diset ke 600" \
+        || warn "Gagal set DPI ke 600 otomatis. Set manual jika perlu."
+else
+    warn "Perintah wm tidak tersedia. Set DPI 600 manual jika diperlukan."
+fi
+
+echo -e "${YELLOW}Tekan Enter setelah selesai setting Developer Options...${NC}"
+read -r
+
 # ── STEP 1: STORAGE PERMISSION ──────────────────────────────────
 line
 info "Step 1: Setup storage permission..."
