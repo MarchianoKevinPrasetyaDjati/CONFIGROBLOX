@@ -156,11 +156,80 @@ printf '%s\n' "$COOKIES_INPUT" > "$COOKIE_FILE"
 log "cookie.txt diupdate dengan akun baris ${START_LINE}-${END_LINE} untuk cloud #${CLOUD_NUM}"
 log "Cookies disimpan ke /sdcard/Download/cookie.txt"
 
-# ── STEP 7: JALANKAN WINTER-REJOIN ──────────────────────────────
+# ── STEP 7: INJECT COOKIES KE 6 PACKAGE ROBLOX ────────────────
+line
+info "Step 7: Inject cookies ke package Roblox..."
+
+PACKAGES=(
+    "com.roblox.client"
+    "com.roblox.clienv"
+    "com.roblox.clienw"
+    "com.roblox.clienx"
+    "com.roblox.clieny"
+    "com.roblox.clienz"
+)
+
+inject_cookie_pkg() {
+    local pkg="$1"
+    local cookie_val="$2"
+    local db="/data/data/${pkg}/app_webview/Cookies"
+    local cookie_sql
+    local sql
+
+    cookie_sql=$(printf '%s' "$cookie_val" | sed "s/'/''/g")
+
+    if ! command -v su >/dev/null 2>&1; then
+        warn "su tidak tersedia. Skip inject ${pkg}"
+        return 1
+    fi
+
+    su -c "[ -f '$db' ]" >/dev/null 2>&1 || {
+        warn "DB cookies tidak ditemukan untuk ${pkg}. Buka app Roblox clone ini dulu sekali."
+        return 1
+    }
+
+    sql="UPDATE cookies SET value='${cookie_sql}', encrypted_value=X'', expires_utc=253402300799000000, is_secure=1, is_httponly=1, has_expires=1, is_persistent=1, last_access_utc=(strftime('%s','now')*1000000) WHERE host_key='.roblox.com' AND name='.ROBLOSECURITY'; INSERT OR REPLACE INTO cookies (host_key,name,value,path,expires_utc,is_secure,is_httponly,has_expires,is_persistent,priority,samesite,source_scheme,source_port,last_access_utc,creation_utc,encrypted_value) SELECT '.roblox.com','.ROBLOSECURITY','${cookie_sql}','/',253402300799000000,1,1,1,1,1,0,2,443,(strftime('%s','now')*1000000),(strftime('%s','now')*1000000),X'' WHERE (SELECT changes())=0;"
+    local su_cmd
+    su_cmd=$(printf "sqlite3 %q %q" "$db" "$sql")
+    su -c "$su_cmd" >/dev/null 2>&1
+
+    if [ $? -eq 0 ]; then
+        log "Inject cookie sukses: ${pkg}"
+        return 0
+    fi
+
+    warn "Inject cookie gagal: ${pkg}"
+    return 1
+}
+
+INJECT_OK=0
+INJECT_FAIL=0
+IDX=1
+for pkg in "${PACKAGES[@]}"; do
+    cookie_line=$(printf '%s\n' "$COOKIES_INPUT" | sed -n "${IDX}p")
+    if [ -z "$cookie_line" ]; then
+        warn "Cookie baris ${IDX} kosong. Skip ${pkg}"
+        INJECT_FAIL=$((INJECT_FAIL + 1))
+        IDX=$((IDX + 1))
+        continue
+    fi
+
+    inject_cookie_pkg "$pkg" "$cookie_line"
+    if [ $? -eq 0 ]; then
+        INJECT_OK=$((INJECT_OK + 1))
+    else
+        INJECT_FAIL=$((INJECT_FAIL + 1))
+    fi
+    IDX=$((IDX + 1))
+done
+
+info "Inject selesai: sukses=${INJECT_OK}, gagal=${INJECT_FAIL}"
+
+# ── STEP 8: JALANKAN WINTER-REJOIN ──────────────────────────────
 line
 echo ""
 echo -e "${BOLD}${GREEN}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${GREEN}║   STEP 7: MENJALANKAN WINTER-REJOIN              ║${NC}"
+echo -e "${BOLD}${GREEN}║   STEP 8: MENJALANKAN WINTER-REJOIN              ║${NC}"
 echo -e "${BOLD}${GREEN}║   Cloud #${CLOUD_NUM} - Auto Rejoin Aktif                 ║${NC}"
 echo -e "${BOLD}${GREEN}╚══════════════════════════════════════════════════╝${NC}"
 echo ""
