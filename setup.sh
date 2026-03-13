@@ -39,11 +39,16 @@ echo -e "${NC}"
 line
 info "Step 0: Membuka Developer Options..."
 if command -v am >/dev/null 2>&1; then
-    am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1         || am start -n com.android.settings/.DevelopmentSettings >/dev/null 2>&1         || warn "Gagal membuka Developer Options otomatis. Buka manual di Settings."
+    am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1 \
+        || am start -n com.android.settings/.DevelopmentSettings >/dev/null 2>&1 \
+        || warn "Gagal membuka Developer Options otomatis. Buka manual di Settings."
 elif [ -x "/system/bin/am" ]; then
-    /system/bin/am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1         || /system/bin/am start -n com.android.settings/.DevelopmentSettings >/dev/null 2>&1         || warn "Gagal membuka Developer Options via /system/bin/am. Buka manual di Settings."
+    /system/bin/am start -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1 \
+        || /system/bin/am start -n com.android.settings/.DevelopmentSettings >/dev/null 2>&1 \
+        || warn "Gagal membuka Developer Options via /system/bin/am. Buka manual di Settings."
 elif command -v cmd >/dev/null 2>&1; then
-    cmd activity start-activity -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1         || warn "Gagal membuka Developer Options via cmd activity. Buka manual di Settings."
+    cmd activity start-activity -a android.settings.APPLICATION_DEVELOPMENT_SETTINGS >/dev/null 2>&1 \
+        || warn "Gagal membuka Developer Options via cmd activity. Buka manual di Settings."
 else
     warn "Perintah am/cmd tidak tersedia. Buka Developer Options manual."
 fi
@@ -62,8 +67,12 @@ else
     warn "Perintah wm tidak tersedia. Set DPI 600 manual jika diperlukan."
 fi
 
-echo -e "${YELLOW}Tekan Enter setelah selesai setting Developer Options...${NC}"
-read -r
+if [ -t 0 ]; then
+    echo -e "${YELLOW}Tekan Enter setelah selesai setting Developer Options...${NC}"
+    read -r
+else
+    warn "Mode non-interaktif terdeteksi: skip pause Developer Options"
+fi
 
 # ── STEP 1: STORAGE PERMISSION ──────────────────────────────────
 line
