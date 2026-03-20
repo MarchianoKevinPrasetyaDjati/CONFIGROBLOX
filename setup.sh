@@ -10,6 +10,7 @@
 # ── KONFIGURASI ──────────────────────────────────────────────────
 GITHUB_RAW="https://raw.githubusercontent.com/MarchianoKevinPrasetyaDjati/CONFIGROBLOX/main"
 PS_FILE_URL="${GITHUB_RAW}/ps_links.txt"
+COOKIE_FILE_URL="${GITHUB_RAW}/cookie.txt"
 # ────────────────────────────────────────────────────────────────
 
 CLOUD_NUM=${1:-1}
@@ -55,6 +56,24 @@ line
 info "Step 3: Extract config.zip dari /sdcard/..."
 [ -f "/sdcard/config.zip" ] || err "File config.zip tidak ditemukan di /sdcard/! Upload dulu via Redfinger."
 unzip -o /sdcard/config.zip -d /sdcard/ > /dev/null 2>&1 || err "Gagal extract zip!"
+
+# Folder clone Roblox dari config.zip diarahkan ke /sdcard/Android/data
+mkdir -p /sdcard/Android/data
+MOVED_ANDROID_DATA=0
+for SRC_DIR in /sdcard/com.roblox.client*; do
+    [ -d "$SRC_DIR" ] || continue
+    PKG_NAME=$(basename "$SRC_DIR")
+    rm -rf "/sdcard/Android/data/${PKG_NAME}"
+    mv "$SRC_DIR" "/sdcard/Android/data/${PKG_NAME}" || err "Gagal memindahkan ${PKG_NAME} ke /sdcard/Android/data"
+    MOVED_ANDROID_DATA=$((MOVED_ANDROID_DATA + 1))
+done
+
+if [ "$MOVED_ANDROID_DATA" -gt 0 ]; then
+    log "Folder Roblox clone dipindahkan ke /sdcard/Android/data (${MOVED_ANDROID_DATA} folder)"
+else
+    warn "Tidak ada folder com.roblox.client* di root zip untuk dipindahkan ke /sdcard/Android/data"
+fi
+
 log "Extract selesai - folder Download/ dan RonixExploit/ sudah ditimpa"
 
 # ── STEP 4: INSTALL 8 CLONE APK ROBLOX ─────────────────────────
@@ -109,14 +128,18 @@ log "PS link berhasil diupdate di auto_rejoin.conf"
 line
 info "Step 6: Memproses cookies untuk cloud #${CLOUD_NUM}..."
 
+COOKIE_SOURCE="/sdcard/Download/cookie_source.txt"
 COOKIE_FILE="/sdcard/Download/cookie.txt"
-[ -f "$COOKIE_FILE" ] || err "cookie.txt tidak ditemukan di /sdcard/Download/!"
+
+info "Download cookie.txt dari GitHub..."
+curl -sfL -o "$COOKIE_SOURCE" "$COOKIE_FILE_URL" || err "Gagal download cookie.txt dari GitHub!"
+[ -s "$COOKIE_SOURCE" ] || err "cookie.txt dari GitHub kosong atau tidak valid!"
 
 START_LINE=$(( (CLOUD_NUM - 1) * 6 + 1 ))
 END_LINE=$(( CLOUD_NUM * 6 ))
 
-COOKIES_INPUT=$(sed -n "${START_LINE},${END_LINE}p" "$COOKIE_FILE")
-[ -z "$COOKIES_INPUT" ] && err "Akun untuk cloud #${CLOUD_NUM} (baris ${START_LINE}-${END_LINE}) tidak ditemukan di cookie.txt!"
+COOKIES_INPUT=$(sed -n "${START_LINE},${END_LINE}p" "$COOKIE_SOURCE")
+[ -z "$COOKIES_INPUT" ] && err "Akun untuk cloud #${CLOUD_NUM} (baris ${START_LINE}-${END_LINE}) tidak ditemukan di cookie.txt GitHub!"
 
 # Cek jumlah baris yang didapat
 GOT_LINES=$(echo "$COOKIES_INPUT" | grep -c '.')
