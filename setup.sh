@@ -19,7 +19,7 @@ case "$CLOUD_NUM" in
 esac
 [ "$CLOUD_NUM" -ge 1 ] || err "Nomor cloud minimal 1"
 
-PS_LINE=$(( (CLOUD_NUM - 1) / 3 + 1 ))   # 3 cloud per PS: cloud 1-3=baris1, 4-6=baris2, dst
+PS_LINE=$(( (CLOUD_NUM - 1) / 2 + 1 ))   # 2 cloud per PS: cloud 1-2=baris1, 3-4=baris2, dst
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; BOLD='\033[1m'; NC='\033[0m'
 log()  { echo -e "${GREEN}[✓]${NC} $1"; }
@@ -56,23 +56,6 @@ line
 info "Step 3: Extract config.zip dari /sdcard/..."
 [ -f "/sdcard/config.zip" ] || err "File config.zip tidak ditemukan di /sdcard/! Upload dulu via Redfinger."
 unzip -o /sdcard/config.zip -d /sdcard/ > /dev/null 2>&1 || err "Gagal extract zip!"
-
-# Folder clone Roblox dari config.zip diarahkan ke /sdcard/Android/data
-mkdir -p /sdcard/Android/data
-MOVED_ANDROID_DATA=0
-for SRC_DIR in /sdcard/com.roblox.client*; do
-    [ -d "$SRC_DIR" ] || continue
-    PKG_NAME=$(basename "$SRC_DIR")
-    rm -rf "/sdcard/Android/data/${PKG_NAME}"
-    mv "$SRC_DIR" "/sdcard/Android/data/${PKG_NAME}" || err "Gagal memindahkan ${PKG_NAME} ke /sdcard/Android/data"
-    MOVED_ANDROID_DATA=$((MOVED_ANDROID_DATA + 1))
-done
-
-if [ "$MOVED_ANDROID_DATA" -gt 0 ]; then
-    log "Folder Roblox clone dipindahkan ke /sdcard/Android/data (${MOVED_ANDROID_DATA} folder)"
-else
-    warn "Tidak ada folder com.roblox.client* di root zip untuk dipindahkan ke /sdcard/Android/data"
-fi
 
 log "Extract selesai - folder Download/ dan RonixExploit/ sudah ditimpa"
 
