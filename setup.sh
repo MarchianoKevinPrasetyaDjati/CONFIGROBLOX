@@ -59,27 +59,9 @@ unzip -o /sdcard/config.zip -d /sdcard/ > /dev/null 2>&1 || err "Gagal extract z
 
 log "Extract selesai - folder Download/ dan RonixExploit/ sudah ditimpa"
 
-# ── STEP 4: INSTALL 8 CLONE APK ROBLOX ─────────────────────────
+# ── STEP 4: AMBIL PS LINK DARI GITHUB ───────────────────────────
 line
-echo ""
-echo -e "${BOLD}${CYAN}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${CYAN}║   STEP 4: INSTALL 6 CLONE APK ROBLOX             ║${NC}"
-echo -e "${BOLD}${CYAN}║   Mendownload & install semua clone Roblox...    ║${NC}"
-echo -e "${BOLD}${CYAN}╚══════════════════════════════════════════════════╝${NC}"
-echo ""
-info "Menjalankan installer.lua (pilih 1-8 otomatis)..."
-cd /sdcard/Download || err "Gagal masuk ke /sdcard/Download"
-echo "1-6" | lua installer.lua
-if [ $? -ne 0 ]; then
-    warn "installer.lua selesai dengan error — cek apakah semua APK berhasil terinstall"
-else
-    log "Semua 6 clone APK Roblox berhasil diinstall!"
-fi
-echo ""
-
-# ── STEP 5: AMBIL PS LINK DARI GITHUB ───────────────────────────
-line
-info "Step 5: Ambil Private Server link dari GitHub (baris ${PS_LINE})..."
+info "Step 4: Ambil Private Server link dari GitHub (baris ${PS_LINE})..."
 RAW_PS=$(curl -sf "$PS_FILE_URL" | grep -v '^#' | grep -v '^$' | sed -n "${PS_LINE}p")
 
 if [ -z "$RAW_PS" ]; then
@@ -107,9 +89,9 @@ sed -i "s|^shared_link_1=.*|shared_link_1=${DEEPLINK_ESCAPED}|" "$CONF"
 sed -i "s|^deeplink=.*|deeplink=${DEEPLINK_ESCAPED}|" "$CONF"
 log "PS link berhasil diupdate di auto_rejoin.conf"
 
-# ── STEP 6: PROSES COOKIES ───────────────────────────────────────
+# ── STEP 5: PROSES COOKIES ───────────────────────────────────────
 line
-info "Step 6: Memproses cookies untuk cloud #${CLOUD_NUM}..."
+info "Step 5: Memproses cookies untuk cloud #${CLOUD_NUM}..."
 
 COOKIE_SOURCE="/sdcard/Download/cookie_source.txt"
 COOKIE_FILE="/sdcard/Download/cookie.txt"
@@ -136,9 +118,9 @@ printf '%s\n' "$COOKIES_INPUT" > "$COOKIE_FILE"
 log "cookie.txt diupdate dengan akun baris ${START_LINE}-${END_LINE} untuk cloud #${CLOUD_NUM}"
 log "Cookies disimpan ke /sdcard/Download/cookie.txt"
 
-# ── STEP 7: INJECT COOKIES KE 6 PACKAGE ROBLOX ────────────────
+# ── STEP 6: INJECT COOKIES KE 6 PACKAGE ROBLOX ────────────────
 line
-info "Step 7: Inject cookies ke package Roblox..."
+info "Step 6: Inject cookies ke package Roblox..."
 
 PACKAGES=(
     "com.roblox.client"
@@ -205,11 +187,11 @@ done
 
 info "Inject selesai: sukses=${INJECT_OK}, gagal=${INJECT_FAIL}"
 
-# ── STEP 8: JALANKAN WINTER-REJOIN ──────────────────────────────
+# ── STEP 7: JALANKAN WINTER-REJOIN ──────────────────────────────
 line
 echo ""
 echo -e "${BOLD}${GREEN}╔══════════════════════════════════════════════════╗${NC}"
-echo -e "${BOLD}${GREEN}║   STEP 8: MENJALANKAN WINTER-REJOIN              ║${NC}"
+echo -e "${BOLD}${GREEN}║   STEP 7: MENJALANKAN WINTER-REJOIN              ║${NC}"
 echo -e "${BOLD}${GREEN}║   Cloud #${CLOUD_NUM} - Auto Rejoin Aktif                 ║${NC}"
 echo -e "${BOLD}${GREEN}╚══════════════════════════════════════════════════╝${NC}"
 echo ""
